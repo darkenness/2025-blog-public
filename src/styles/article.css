@@ -5,7 +5,8 @@
 	letter-spacing: 0.03em;
 	font-size: 15px;
 	width: 100%;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: visible;
 }
 
 /* Headings */
@@ -16,11 +17,6 @@
 	line-height: 1.25;
 	margin-top: 2em;
 	margin-bottom: 1.5em;
-
-	&::before {
-		content: '# ';
-		@apply text-brand/60;
-	}
 }
 .prose h1 {
 	font-size: 1.75rem;
@@ -31,27 +27,14 @@
 .prose h3 {
 	font-size: 1rem;
 	font-weight: 600;
-
-	&::before {
-		content: '## ';
-		@apply text-brand/60;
-	}
 }
 .prose h4 {
 	font-size: 0.85rem;
 	font-weight: 500;
-	&::before {
-		content: '### ';
-		@apply text-brand/60;
-	}
 }
 .prose h5 {
 	font-size: 0.75rem;
 	font-weight: 500;
-	&::before {
-		content: '#### ';
-		@apply text-brand/60;
-	}
 }
 
 /* Paragraph */
@@ -120,10 +103,14 @@
 	padding: 1rem 1.25rem;
 	border-radius: 12px;
 	overflow: auto;
-	margin: 1em 0 2em;
+	margin: 1em 0.5rem 2em;
 	line-height: 1.25em;
-	width: 100%;
 	display: block;
+	box-shadow: 
+		0 4px 16px rgba(0, 0, 0, 0.1),
+		0 2px 8px rgba(0, 0, 0, 0.08),
+		0 1px 4px rgba(0, 0, 0, 0.06),
+		0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 .prose pre code {
 	background: transparent !important;
@@ -136,11 +123,24 @@
 /* Code Block with Copy Button */
 .prose .code-block-wrapper {
 	position: relative;
-	margin: 1em 0 2em;
+	margin: 1em 0.5rem 2em;
+	box-shadow: 
+		0 4px 16px rgba(0, 0, 0, 0.1),
+		0 2px 8px rgba(0, 0, 0, 0.08),
+		0 1px 4px rgba(0, 0, 0, 0.06),
+		0 0 0 1px rgba(0, 0, 0, 0.05);
+	border-radius: 12px;
+	overflow: visible;
+	background: transparent;
 }
 
 .prose .code-block-wrapper > pre {
 	margin: 0;
+	box-shadow: none;
+	border: none;
+	background: transparent;
+	border-radius: 12px;
+	overflow: hidden;
 }
 
 .prose .code-block-copy-btn {

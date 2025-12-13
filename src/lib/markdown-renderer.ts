@@ -115,14 +115,47 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 	}
 
 	renderer.listitem = (token: Tokens.ListItem) => {
-		// Render inline markdown inside list items (e.g. links, emphasis)
-		const inner = token.tokens ? (marked.parser(token.tokens) as string) : token.text
-
 		if (token.task) {
+			// For task lists, marked library already removes the task marker from token.text
+			// But we need to render inline markdown (links, emphasis, etc.) from tokens
+			let inner = ''
+			
+			if (token.tokens && token.tokens.length > 0) {
+				// Filter out task marker tokens - they appear as text tokens with raw value like '[ ]' or '[x]'
+				const tokensToRender = token.tokens.filter((t) => {
+					if (t.type === 'text') {
+						const textToken = t as Tokens.Text
+						// Check both raw and text properties for task marker patterns
+						const raw = (textToken.raw || '').trim()
+						const text = (textToken.text || '').trim()
+						// Skip if it matches task marker pattern
+						if (raw === '[ ]' || raw === '[x]' || raw === '[X]' ||
+							text === '[ ]' || text === '[x]' || text === '[X]' ||
+							/^\[[ xX]\]\s*$/.test(raw) || /^\[[ xX]\]\s*$/.test(text)) {
+							return false
+						}
+					}
+					return true
+				})
+				
+				// Render the filtered tokens
+				if (tokensToRender.length > 0) {
+					inner = marked.parser(tokensToRender) as string
+				} else {
+					// Fallback: use token.text and ensure no task marker
+					inner = (token.text || '').replace(/^\[[ xX]\]\s*/, '').trim()
+				}
+			} else {
+				// No tokens, use token.text directly (marked should have already removed task marker)
+				inner = (token.text || '').replace(/^\[[ xX]\]\s*/, '').trim()
+			}
+			
 			const checkbox = token.checked ? '<input type="checkbox" checked disabled />' : '<input type="checkbox" disabled />'
-			return `<li class="task-list-item">${checkbox} ${inner}</li>\n`
+			return `<li class="task-list-item">${checkbox}${inner ? ' ' + inner : ''}</li>\n`
 		}
 
+		// Render inline markdown inside list items (e.g. links, emphasis)
+		const inner = token.tokens ? (marked.parser(token.tokens) as string) : token.text
 		return `<li>${inner}</li>\n`
 	}
 
